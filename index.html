@@ -1,175 +1,175 @@
 <style>
     table {
-      width: 100%; 
-      border-collapse: collapse;
-      table-layout: fixed; 
+    width: 100%; 
+    border-collapse: collapse;
+    table-layout: fixed; 
     }
     td {
-      height: 2vw;
-      max-height: 50px; 
-      text-align: center;
-      vertical-align: middle;
-      border: 1px solid #fff;
-      color: #fff;
-      cursor: pointer;
-      background-color: #63737c;
+    height: 2vw;
+    max-height: 50px; 
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #fff;
+    color: #fff;
+    cursor: pointer;
+    background-color: #63737c;
     }
     .crossed {
-      color: #555;
-      text-decoration: none; 
-      background-color: #ddd;
-      cursor: default;
-      color:#fff;
+    color: #555;
+    text-decoration: none; 
+    background-color: #ddd;
+    cursor: default;
+    color:#fff;
     }
-    </style>
-    <script>
-      var selectedCell = null;
-function getCellNumber(cell) {
-  return parseInt(cell.innerText, 10);
-}
-function getAllCellsInOrder(table) {
-  var cells = [];
-  for (var i = 0; i < table.rows.length; i++) {
+ </style>
+ <script>
+    var selectedCell = null;
+    function getCellNumber(cell) {
+    return parseInt(cell.innerText, 10);
+    }
+    function getAllCellsInOrder(table) {
+    var cells = [];
+    for (var i = 0; i < table.rows.length; i++) {
     for (var j = 0; j < table.rows[i].cells.length; j++) {
-      cells.push(table.rows[i].cells[j]);
+    cells.push(table.rows[i].cells[j]);
     }
-  }
-  return cells;
-}
-function areCellsAdjacent(firstCell, secondCell, table) {
+    }
+    return cells;
+    }
+    function areCellsAdjacent(firstCell, secondCell, table) {
     var cells = getAllCellsInOrder(table);
     var firstIndex = cells.indexOf(firstCell);
     var secondIndex = cells.indexOf(secondCell);
     var cellsPerRow = table.rows[0].cells.length;
     if (firstIndex > secondIndex) {
-        [firstIndex, secondIndex] = [secondIndex, firstIndex];
+      [firstIndex, secondIndex] = [secondIndex, firstIndex];
     }
     if (firstCell.cellIndex === secondCell.cellIndex) {
-        for (var i = firstIndex + cellsPerRow; i < secondIndex; i += cellsPerRow) {
-        if (!cells[i].classList.contains('crossed')) {
-            return false;
-        }
-        }
-        return true;
+      for (var i = firstIndex + cellsPerRow; i < secondIndex; i += cellsPerRow) {
+      if (!cells[i].classList.contains('crossed')) {
+          return false;
+      }
+      }
+      return true;
     }
     var startRow = Math.floor(firstIndex / cellsPerRow);
     var endRow = Math.floor(secondIndex / cellsPerRow);
     if (startRow === endRow || endRow === startRow + 1) {
-        for (var i = firstIndex + 1; i < secondIndex; i++) {
-        var currentRow = Math.floor(i / cellsPerRow);
-        if (currentRow !== startRow && currentRow !== endRow) {
-            continue;
-        }
-        if (!cells[i].classList.contains('crossed')) {
-            return false;
-        }
-        }
-        return true;
+      for (var i = firstIndex + 1; i < secondIndex; i++) {
+      var currentRow = Math.floor(i / cellsPerRow);
+      if (currentRow !== startRow && currentRow !== endRow) {
+          continue;
+      }
+      if (!cells[i].classList.contains('crossed')) {
+          return false;
+      }
+      }
+      return true;
     }
     return false;
-}
-function checkAllCrossed(table) {
+    }
+    function checkAllCrossed(table) {
     var cells = getAllCellsInOrder(table);
     for (var i = 0; i < cells.length; i++) {
-      if (!cells[i].classList.contains('crossed')) {
-        return false;
-      }
+    if (!cells[i].classList.contains('crossed')) {
+      return false;
+    }
     }
     alert("Herzlichen GlĂĽckwunsch! Alle Zahlen sind aufgedeckt.");
     return true;
-  }
-  
-  function checkPairAndCross(firstCell, secondCell, table) {
+    }
+    
+    function checkPairAndCross(firstCell, secondCell, table) {
     if (firstCell === secondCell) {
-      return;
+    return;
     }
     var firstNumber = getCellNumber(firstCell);
     var secondNumber = getCellNumber(secondCell);
     var isAdjacent = areCellsAdjacent(firstCell, secondCell, table);
-  
+    
     if (!firstCell.classList.contains('crossed') && 
-        !secondCell.classList.contains('crossed') && 
-        isAdjacent && 
-        ((firstNumber === secondNumber) || (firstNumber + secondNumber === 10))) {
-      firstCell.classList.add('crossed');
-      secondCell.classList.add('crossed');
-      checkAllCrossed(table); 
+      !secondCell.classList.contains('crossed') && 
+      isAdjacent && 
+      ((firstNumber === secondNumber) || (firstNumber + secondNumber === 10))) {
+    firstCell.classList.add('crossed');
+    secondCell.classList.add('crossed');
+    checkAllCrossed(table); 
     }
     selectedCell = null;
-  }
-  
-function crossNumber(cell) {
-  var table = document.getElementById('gameTable');
-  if (cell.classList.contains('crossed')) return;
-
-  if (selectedCell === null) {
+    }
+    
+    function crossNumber(cell) {
+    var table = document.getElementById('gameTable');
+    if (cell.classList.contains('crossed')) return;
+    
+    if (selectedCell === null) {
     selectedCell = cell;
-  } else {
+    } else {
     checkPairAndCross(selectedCell, cell, table);
     selectedCell = null; 
-  }
-}
-function addRow() {
-  var table = document.getElementById('gameTable');
-  var newRowNumbers = [];
-  var cells = getAllCellsInOrder(table);
-  for (var i = 0; i < cells.length; i++) {
-    if (!cells[i].classList.contains('crossed')) {
-      newRowNumbers.push(getCellNumber(cells[i]));
     }
-  }
-  var lastRow = table.rows[table.rows.length - 1];
-  var currentCellCount = lastRow.cells.length;
-  for (var i = 0; i < newRowNumbers.length && currentCellCount < 9; i++, currentCellCount++) {
+    }
+    function addRow() {
+    var table = document.getElementById('gameTable');
+    var newRowNumbers = [];
+    var cells = getAllCellsInOrder(table);
+    for (var i = 0; i < cells.length; i++) {
+    if (!cells[i].classList.contains('crossed')) {
+    newRowNumbers.push(getCellNumber(cells[i]));
+    }
+    }
+    var lastRow = table.rows[table.rows.length - 1];
+    var currentCellCount = lastRow.cells.length;
+    for (var i = 0; i < newRowNumbers.length && currentCellCount < 9; i++, currentCellCount++) {
     var cell = lastRow.insertCell(-1);
     cell.innerText = newRowNumbers[i];
     cell.onclick = function() { crossNumber(this); };
-  }
-  newRowNumbers = newRowNumbers.slice(i); 
-  var row;
-  for (var i = 0; i < newRowNumbers.length; i++) {
+    }
+    newRowNumbers = newRowNumbers.slice(i); 
+    var row;
+    for (var i = 0; i < newRowNumbers.length; i++) {
     if (i % 9 === 0) {
-      row = table.insertRow(-1);
+    row = table.insertRow(-1);
     }
     var cell = row.insertCell(-1);
     cell.innerText = newRowNumbers[i];
     cell.onclick = function() { crossNumber(this); };
-  }
-}
-    </script>
-    <table id="gameTable">
-      <tr>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">2</td>
-        <td onclick="crossNumber(this)">3</td>
-        <td onclick="crossNumber(this)">4</td>
-        <td onclick="crossNumber(this)">5</td>
-        <td onclick="crossNumber(this)">6</td>
-        <td onclick="crossNumber(this)">7</td>
-        <td onclick="crossNumber(this)">8</td>
-        <td onclick="crossNumber(this)">9</td>
-      </tr>
-      <tr>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">2</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">3</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">4</td>
-        <td onclick="crossNumber(this)">1</td>
-      </tr>
-      <tr>
-        <td onclick="crossNumber(this)">5</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">6</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">7</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">8</td>
-        <td onclick="crossNumber(this)">1</td>
-        <td onclick="crossNumber(this)">9</td>
-      </tr>
-    </table>
-    <button onclick="addRow()">+</button>
+    }
+    }
+ </script>
+ <table id="gameTable">
+    <tr>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">2</td>
+       <td onclick="crossNumber(this)">3</td>
+       <td onclick="crossNumber(this)">4</td>
+       <td onclick="crossNumber(this)">5</td>
+       <td onclick="crossNumber(this)">6</td>
+       <td onclick="crossNumber(this)">7</td>
+       <td onclick="crossNumber(this)">8</td>
+       <td onclick="crossNumber(this)">9</td>
+    </tr>
+    <tr>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">2</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">3</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">4</td>
+       <td onclick="crossNumber(this)">1</td>
+    </tr>
+    <tr>
+       <td onclick="crossNumber(this)">5</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">6</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">7</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">8</td>
+       <td onclick="crossNumber(this)">1</td>
+       <td onclick="crossNumber(this)">9</td>
+    </tr>
+ </table>
+ <button onclick="addRow()">+</button>

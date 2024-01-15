@@ -36,38 +36,63 @@
     }
     return cells;
     }
+    
     function areCellsAdjacent(firstCell, secondCell, table) {
     var cells = getAllCellsInOrder(table);
     var firstIndex = cells.indexOf(firstCell);
     var secondIndex = cells.indexOf(secondCell);
     var cellsPerRow = table.rows[0].cells.length;
+
     if (firstIndex > secondIndex) {
-      [firstIndex, secondIndex] = [secondIndex, firstIndex];
+        [firstIndex, secondIndex] = [secondIndex, firstIndex];
     }
+
     if (firstCell.cellIndex === secondCell.cellIndex) {
-      for (var i = firstIndex + cellsPerRow; i < secondIndex; i += cellsPerRow) {
-      if (!cells[i].classList.contains('crossed')) {
-          return false;
-      }
-      }
-      return true;
+        for (var i = firstIndex + cellsPerRow; i < secondIndex; i += cellsPerRow) {
+            if (!cells[i].classList.contains('crossed')) {
+                return false;
+            }
+        }
+        return true;
     }
+
     var startRow = Math.floor(firstIndex / cellsPerRow);
     var endRow = Math.floor(secondIndex / cellsPerRow);
+
     if (startRow === endRow || endRow === startRow + 1) {
-      for (var i = firstIndex + 1; i < secondIndex; i++) {
-      var currentRow = Math.floor(i / cellsPerRow);
-      if (currentRow !== startRow && currentRow !== endRow) {
-          continue;
-      }
-      if (!cells[i].classList.contains('crossed')) {
-          return false;
-      }
-      }
-      return true;
+        for (var i = firstIndex + 1; i < secondIndex; i++) {
+            var currentRow = Math.floor(i / cellsPerRow);
+            if (currentRow !== startRow && currentRow !== endRow) {
+                continue;
+            }
+            if (!cells[i].classList.contains('crossed')) {
+                return false;
+            }
+        }
+        return true;
     }
-    return false;
+
+    // Wrap-Around-Logik, die über sämtliche Zeilen hinweg geht
+    var indexDiff = secondIndex - firstIndex;
+    if (indexDiff > cellsPerRow) {
+        var wrapAroundIndex = firstIndex + cellsPerRow * (table.rows.length - startRow);
+        for (var i = firstIndex + 1; i < wrapAroundIndex; i++) {
+            if (!cells[i % cells.length].classList.contains('crossed')) {
+                return false;
+            }
     }
+    for (var i = secondIndex - cellsPerRow * endRow; i < secondIndex; i++) {
+        if (!cells[i % cells.length].classList.contains('crossed')) {
+            return false;
+        }
+    }
+    return true;
+}
+
+return false;
+}
+
+
     function checkAllCrossed(table) {
     var cells = getAllCellsInOrder(table);
     for (var i = 0; i < cells.length; i++) {
